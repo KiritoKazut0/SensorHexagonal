@@ -21,12 +21,13 @@ export default class AddController {
 
         try {
             const authSaved = await this.AdduseCase.run(request);
-
+          
+            
             if (!authSaved){
-                console.log('Ha ocurrido un error durante la peticón');
-                return res.status(500).json({
+               
+                return res.status(409).json({
                     data: null,
-                    msg: "User not saved"
+                    msg: "Email already registered"
                 })
             }
 

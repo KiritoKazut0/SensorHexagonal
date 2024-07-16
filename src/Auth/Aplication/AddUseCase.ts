@@ -24,10 +24,12 @@ export default class AddUseCase {
                 token: this.tokenInterface.generateToken(auth)
             }
 
-            return responses
+           
+
+            return responses;
 
         } catch (error) {
-            console.log('Ha ocurrido un error durante la petición');
+            console.log('Ha ocurrido un error durante la petición generate');
             console.error(error);
             return null
             

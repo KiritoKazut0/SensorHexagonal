@@ -8,11 +8,13 @@ dotenv.config();
 export default class TokensService implements TokenInterface {
     generateToken(auth: AuthRequest): string {
         return jwt.sign({
-            name: auth.name
+            name: auth.name,
+        
         },
         process.env["JWT_SECRET"] ?? "DEFAULT_SECRET",
         {
-            algorithm: "HS256"
+            algorithm: "HS256",
+            expiresIn: 60
         }
         );
     }

@@ -16,7 +16,7 @@ UserModel.init({
        primaryKey: true
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false
     },
     password: {
@@ -24,13 +24,19 @@ UserModel.init({
         allowNull: false
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(30),
         allowNull: false
     }
 },{
     tableName: "users",
     timestamps: false,
     sequelize: sequelize_conexion
-})
+});
+
+(async () => {
+    await UserModel.sync({alter: true})
+})();
+
+
 
 export default UserModel

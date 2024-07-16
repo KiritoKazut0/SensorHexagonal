@@ -5,15 +5,15 @@ import UserModel from "./models/UserModel";
 import UUIDInterface from "../Aplication/Services/UUIDInterface";
 
 
-export default class MysqlUserRepository implements AuthRepository{
-    constructor(readonly model: typeof UserModel, readonly generateUuid: UUIDInterface){
+export default class MysqlUserRepository implements AuthRepository {
+    constructor(readonly model: typeof UserModel, readonly generateUuid: UUIDInterface) {
         this.model.sync();
     }
 
     async access(auth: AuthRequest): Promise<Auth | null> {
         try {
             const user = await UserModel.findOne({
-                where: {email: auth.email, name: auth.name}
+                where: { email: auth.email, name: auth.name }
             });
 
             if (user === null) return null;
@@ -34,51 +34,55 @@ export default class MysqlUserRepository implements AuthRepository{
 
     async add(auth: AuthRequest): Promise<Auth | null> {
         try {
-            // verificar antes si el email ya existe
-            const email_registered = await this.isExisted_email(auth.email);
-            if (!email_registered === null) return null;
 
-            const newUser = await UserModel.create({
-                name: auth.name,
-                email: auth.email,
-                password: auth.password,
-                id: this.generateUuid.get_uuid()
-            })
+            const email_registered = await this.isExistedEmail(auth.email);
 
-            console.log('User added');
-            return newUser;
-            
+            if (email_registered === null) {
+                const newUser = await UserModel.create({
+                    name: auth.name,
+                    email: auth.email,
+                    password: auth.password,
+                    id: this.generateUuid.get_uuid()
+                });
+
+                console.log('User added');
+                return newUser;
+            } else {
+                console.log('Email already registered');
+                return null;
+            }
         } catch (error) {
-            console.log("Ha ocurrido un error durante la petición.");
+            console.log("Ha ocurrido un error durante la petición");
             console.error(error);
             return null;
         }
     }
 
+    private async isExistedEmail(email: string): Promise<Auth | null> {
+        try {
+            const result = await UserModel.findOne({
+                where: { email: email }
+            });
 
-    private async isExisted_email (email: string): Promise <Auth | null>{
-      try {
-        const result = await UserModel.findOne({
-            where: {email: email}
-        });
+       
 
-        if (result === null) return null;
+            if (result === null) return null;
 
-        const response : Auth = {
-            id: result.id,
-            name: result.name,
-            email: result.email,
-            password: result.password
-        }; 
+            const response: Auth = {
+                id: result.id,
+                name: result.name,
+                email: result.email,
+                password: result.password
+            };
 
+            return response;
 
-        return response;
-      } catch (error) {
-            console.log('error en la consulta');
-            console.error(error)
-            return null
-      }
+        } catch (error) {
+            console.log('Error en la consulta');
+            console.error(error);
+            return null;
+        }
+    }
 
-    }   
 
 }
