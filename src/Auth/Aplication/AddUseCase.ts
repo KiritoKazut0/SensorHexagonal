@@ -24,8 +24,6 @@ export default class AddUseCase {
                 token: this.tokenInterface.generateToken(auth)
             }
 
-           
-
             return responses;
 
         } catch (error) {

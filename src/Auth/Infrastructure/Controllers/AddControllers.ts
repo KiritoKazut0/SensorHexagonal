@@ -22,7 +22,6 @@ export default class AddController {
         try {
             const authSaved = await this.AdduseCase.run(request);
           
-            
             if (!authSaved){
                
                 return res.status(409).json({
