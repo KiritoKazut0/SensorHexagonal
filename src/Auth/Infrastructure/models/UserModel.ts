@@ -1,7 +1,7 @@
 import { DataTypes, Model} from "sequelize";
 import Auth from "../../Domain/Auth";
 import sequelize_conexion from "../../../Database/conection";
-
+import { databaseRelationManager } from "../../../Database/DatabaseRelationManager";
 class UserModel extends Model<Auth> implements Auth {
     id!: string;
     email!: string;
@@ -33,9 +33,8 @@ UserModel.init({
     sequelize: sequelize_conexion
 });
 
-(async () => {
-    await UserModel.sync({alter: true})
-})();
+databaseRelationManager.setUserModel(UserModel);
+
 
 
 

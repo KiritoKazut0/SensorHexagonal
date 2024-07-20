@@ -6,7 +6,7 @@ dotenv.config();
 
 export default class DecodedToken implements TokenInterface {
     validate(token: string): boolean {
-        const SECRET = process.env["SECRET_TOKEN"] ?? "DefaultSecret";
+        const SECRET = process.env["JWT_SECRET"] ?? "DEFAULT_SECRET";
         try {
             const decode = jwt.verify(token, SECRET);
 

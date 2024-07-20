@@ -14,7 +14,7 @@ export default class TokensService implements TokenInterface {
         process.env["JWT_SECRET"] ?? "DEFAULT_SECRET",
         {
             algorithm: "HS256",
-            expiresIn: 60
+            expiresIn: 60*60
         }
         );
     }

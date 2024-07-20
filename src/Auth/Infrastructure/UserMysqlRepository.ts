@@ -3,7 +3,7 @@ import Auth from "../Domain/Auth";
 import AuthRepository from "../Domain/AuthRepository";
 import UserModel from "./models/UserModel";
 import UUIDInterface from "../Aplication/Services/UUIDInterface";
-
+import { databaseRelationManager } from "../../Database/DatabaseRelationManager";
 
 export default class MysqlUserRepository implements AuthRepository {
     constructor(readonly model: typeof UserModel, readonly generateUuid: UUIDInterface) {
@@ -12,7 +12,7 @@ export default class MysqlUserRepository implements AuthRepository {
 
     async access(auth: AuthRequest): Promise<Auth | null> {
         try {
-            const user = await UserModel.findOne({
+            const user = await this.model.findOne({
                 where: { email: auth.email, name: auth.name }
             });
 
@@ -38,7 +38,7 @@ export default class MysqlUserRepository implements AuthRepository {
             const email_registered = await this.isExistedEmail(auth.email);
 
             if (email_registered === null) {
-                const newUser = await UserModel.create({
+                const newUser = await this.model.create({
                     name: auth.name,
                     email: auth.email,
                     password: auth.password,
@@ -60,7 +60,7 @@ export default class MysqlUserRepository implements AuthRepository {
 
     private async isExistedEmail(email: string): Promise<Auth | null> {
         try {
-            const result = await UserModel.findOne({
+            const result = await this.model.findOne({
                 where: { email: email }
             });
 
