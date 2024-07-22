@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import authRouter from "./Auth/Infrastructure/Router/AuthRouter";
-import routerPlants from "./Plants/Infrestructure/Router/router";
+import routerPlants from "./Plants/Infrestructure/Router/Router";
+import routerStages from "./GrowthStages/infrestructure/Router/Router";
 dotenv.config();
 
 const APP_PORT = process.env['APP_PORT'] ?? 3000;
@@ -14,7 +15,8 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth', authRouter);
-app.use('/plants', routerPlants)
+app.use('/plants', routerPlants);
+app.use('/stages', routerStages);
 
 app.listen(APP_PORT, () => {
     console.clear();

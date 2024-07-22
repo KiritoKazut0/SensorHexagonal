@@ -3,11 +3,13 @@ import sequelize_conexion from "./conection";
 class DatabaseRelationManager<
   UserModel extends Model,
   PlantsModel extends Model,
-  PlantsReadingsModel extends Model
+  PlantsReadingsModel extends Model,
+  StagesModel extends Model
 > {
   private userModel: ModelStatic<UserModel> | null = null;
   private plantsModel: ModelStatic<PlantsModel> | null = null;
   private plantsReadingsModel: ModelStatic<PlantsReadingsModel> | null = null;
+  private stagesModel: ModelStatic <StagesModel> | null = null;
 
   setUserModel(model: ModelStatic<UserModel>) {
     this.userModel = model;
@@ -20,6 +22,11 @@ class DatabaseRelationManager<
   setPlantsReadingsModel(model: ModelStatic<PlantsReadingsModel>) {
     this.plantsReadingsModel = model;
   }
+
+  setStagesModel(model: ModelStatic<StagesModel>) {
+    this.stagesModel = model;
+  }
+
 
   setupRelacionUser() {
     if (this.userModel && this.plantsModel) {
@@ -40,17 +47,39 @@ class DatabaseRelationManager<
     }
   }
 
+  setupRelacionStages() {
+    if (this.plantsModel && this.stagesModel) {
+      this.plantsModel.hasMany(this.stagesModel, {
+        sourceKey: 'id',
+        foreignKey: 'idPlant',
+        as: 'stages',
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+      });
+
+      this.stagesModel.belongsTo(this.plantsModel, {
+        foreignKey: 'idPlant', 
+        as: 'plants'
+      });
+    } else {
+     
+      throw new Error('Hubo un error al relacionar plantas con etapas');
+    }
+  }
+
+
 }
+
+
 
 export const databaseRelationManager = new DatabaseRelationManager();
 
 
  async function setupRelations() {
-
-
     try {
         await sequelize_conexion.sync(); 
         databaseRelationManager.setupRelacionUser();
+        databaseRelationManager.setupRelacionStages();
 
         console.log("Base de datos sincronizada y relaciones configuradas exitosamente.");
     } catch (error) {
@@ -66,3 +95,4 @@ export const databaseRelationManager = new DatabaseRelationManager();
       console.error("Error al configurar la base de datos:", error);
   }
 })();
+

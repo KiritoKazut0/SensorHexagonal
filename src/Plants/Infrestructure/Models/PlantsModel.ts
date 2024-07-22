@@ -1,4 +1,4 @@
-import { DataTypes, Model, NOW } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import Plants from "../../Domain/Plants";
 import sequelize_conexion from "../../../Database/conection";
 import { databaseRelationManager } from "../../../Database/DatabaseRelationManager";

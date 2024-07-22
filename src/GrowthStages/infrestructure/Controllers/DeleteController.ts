@@ -14,12 +14,9 @@ export default class DeleteController {
                 data: null
             })
         }
-
         return res.status(200).json({
             msg: response[1],
             data: null
         })
-
     }
-
 }

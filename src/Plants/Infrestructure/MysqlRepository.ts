@@ -8,7 +8,8 @@ export default class MysqlRepository implements PlantsRepository {
     constructor(
         readonly plantsModel: typeof PlantsModel,
         readonly generateUuid: UUIDInterface) { 
-            this.plantsModel.sync()
+
+            this.plantsModel.sync();
         }
     //typeOF es para indicarle que se usara metodos estaticoc y que no se esta instanciando como una clase
     // y que se esta haciendo una referecnia al modelo
