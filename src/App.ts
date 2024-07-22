@@ -4,6 +4,7 @@ import cors from "cors";
 import authRouter from "./Auth/Infrastructure/Router/AuthRouter";
 import routerPlants from "./Plants/Infrestructure/Router/Router";
 import routerStages from "./GrowthStages/infrestructure/Router/Router";
+import mqttClient from "./PlantReadings/Infrestructure/Dependencies";
 dotenv.config();
 
 const APP_PORT = process.env['APP_PORT'] ?? 3000;
@@ -22,3 +23,7 @@ app.listen(APP_PORT, () => {
     console.clear();
     console.log(` => Api listening on http://127.0.0.1:${APP_PORT}`);  
 });
+
+mqttClient;
+  
+
