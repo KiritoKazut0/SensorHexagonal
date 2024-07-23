@@ -111,3 +111,28 @@ GrowthStage.belongsTo(PlantGrowth, { foreignKey: 'id_plantGrowth' });
 sequelize.sync({ force: true }).then(() => {
     console.log("Database & tables created!");
 });
+
+
+/*
+{
+    tem: data,
+    hum: data,
+    devices:{
+        fan: bool,
+        light: bool,
+        bomba: bool,
+        leds {
+            visible: bool,
+            UV: bool,
+            IF: bool
+        }    
+    }
+}
+
+temperatura y humedad: sensor/Tem-Hum
+ventilador: sensor/Fan
+light: sensor/LightSensor
+bomba: sensor/bomba
+leds: sensor/leds
+
+*/

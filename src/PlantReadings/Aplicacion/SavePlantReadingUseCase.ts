@@ -2,11 +2,13 @@ import PlantReading from "../Domain/PlantsReading";
 import PlantReadingRepository from "../Domain/PlantsReadingRepository";
 import PlantsReadingRequest from "../Domain/DTOS/PlantsReadingRequest";
 import UUIDInterface from "./Service/UUIDInterface";
+import WebsocketService  from "../Domain/Socket/WebsocketService";
 
 export default class SavePlantReadingUseCase {
     constructor(
         readonly entryRepository: PlantReadingRepository,
-        readonly uuidGenerate: UUIDInterface){}
+        readonly uuidGenerate: UUIDInterface,
+        readonly sockedService: WebsocketService){}
 
     async run (request: PlantsReadingRequest): Promise <void>{
         
@@ -18,7 +20,13 @@ export default class SavePlantReadingUseCase {
             new Date()
         );
 
-        await this.entryRepository.save(plantReading)
+        
+
+        // await this.entryRepository.save(plantReading)
+        
+        //enviar los datos a websocket
+       await this.sockedService.sendMessage('message', plantReading);
+      
     }
 
 }

@@ -7,7 +7,7 @@ dotenv.config();
 export default class MqttClient {
     private client: mqtt.MqttClient;
     private brokerUrl: string = process.env['BROKER'] || 'mqtt://34.197.63.247/:1883'
-    private topic:string = process.env['TOPIC'] || 'esp32.mqtt';
+    private topic:string = process.env['TOPIC'] || 'sensor/Tem-Hum';
 
     constructor(private savePlantReadingUseCase: SavePlantReadingUseCase) {
       this.client = mqtt.connect(this.brokerUrl); 
@@ -63,5 +63,17 @@ export default class MqttClient {
               temperatura,
               humedad
           });
+
+          try {
+            console.log(`Lectura guardada y enviada al WebSocket`);
+            await this.savePlantReadingUseCase.run({
+              idPlant: '',
+              humidity: humedad,
+              temperature: temperatura
+            })
+
+          } catch (error) {
+            console.error('Error al guardar y enviar la lectura de la planta:', error);
+          }
     }
   }
