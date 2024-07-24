@@ -20,12 +20,15 @@ export default class SavePlantReadingUseCase {
             new Date()
         );
 
-        
+        const data = {
+            type: 'TemHum',
+            data: plantReading
+        }
 
         // await this.entryRepository.save(plantReading)
         
         //enviar los datos a websocket
-       await this.sockedService.sendMessage('message', plantReading);
+       await this.sockedService.sendMessage('message', data);
       
     }
 

@@ -115,8 +115,8 @@ sequelize.sync({ force: true }).then(() => {
 
 /*
 {
-    tem: data,
-    hum: data,
+    tem: data, *
+    hum: data, *
     devices:{
         fan: bool,
         light: bool,
@@ -129,10 +129,9 @@ sequelize.sync({ force: true }).then(() => {
     }
 }
 
-temperatura y humedad: sensor/Tem-Hum
-ventilador: sensor/Fan
-light: sensor/LightSensor
-bomba: sensor/bomba
-leds: sensor/leds
+
+ventilador: sensor/Fan*
+bomba: sensor/bomba *
+leds: sensor/leds *
 
 */

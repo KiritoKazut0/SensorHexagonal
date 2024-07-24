@@ -1,11 +1,17 @@
 import { Socket, io } from "socket.io-client";
 import WebsocketService from "../../Domain/Socket/WebsocketService";
+import dotenv from "dotenv"
 
+dotenv.config();
 export default class ExternalWebsocketIo implements WebsocketService {
     private socket: Socket;
 
-    constructor(url: string){
-        this.socket = io(url);
+    constructor(){
+        this.socket = io(process.env['SERVER_WEBSOCKET'] ?? "", {
+            extraHeaders: {
+                'authorization': process.env['KEY_WEBSOCKET']?.toString() ?? "default"
+            }
+        });
 
         this.socket.on('connect',() => {
             console.log('Conectado al servidor Socket.IO externo');
