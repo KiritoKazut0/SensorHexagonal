@@ -7,7 +7,7 @@ export default class EmitWaterPumpUseCase {
     async run(request: WaterPumpRequest): Promise<void>{
         const data = {
             type: 'watherPump',
-            data: request
+            bomba: request
         }
 
         this.sockedService.sendMessage('message', data)

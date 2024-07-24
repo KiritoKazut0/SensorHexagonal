@@ -5,6 +5,7 @@ import authRouter from "./Auth/Infrastructure/Router/AuthRouter";
 import routerPlants from "./Plants/Infrestructure/Router/Router";
 import routerStages from "./GrowthStages/infrestructure/Router/Router";
 import mqttClient from "./PlantReadings/Infrestructure/Dependencies";
+import routerPublish from "./Events/Infrestructure/router/router";
 dotenv.config();
 
 const APP_PORT = process.env['APP_PORT'] ?? 3000;
@@ -18,6 +19,7 @@ app.use(cors());
 app.use('/auth', authRouter);
 app.use('/plants', routerPlants);
 app.use('/stages', routerStages);
+app.use('/events', routerPublish)
 
 app.listen(APP_PORT, () => {
     console.clear();

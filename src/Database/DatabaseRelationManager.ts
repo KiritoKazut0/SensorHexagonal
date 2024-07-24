@@ -47,6 +47,29 @@ class DatabaseRelationManager<
     }
   }
 
+  setupRelacionPlantsReadings(){
+      if(this.plantsModel && this.plantsReadingsModel){
+        this.plantsModel.hasMany(this.plantsReadingsModel, {
+          sourceKey: 'id',
+          foreignKey: "idPlant",
+          as: 'plant_readings',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
+        });
+
+        this.plantsReadingsModel.belongsTo(this.plantsModel, {
+          foreignKey: 'idPlant',
+          as: 'plants'
+        })
+      } else {
+        throw new Error('Hubo un error al relacionar plantas con lectura de plantas');
+
+      }
+
+    
+
+  }
+
   setupRelacionStages() {
     if (this.plantsModel && this.stagesModel) {
       this.plantsModel.hasMany(this.stagesModel, {

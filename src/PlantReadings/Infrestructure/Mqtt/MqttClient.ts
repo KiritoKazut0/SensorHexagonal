@@ -14,7 +14,7 @@ export default class MqttClient {
   private topicTemHum: string = process.env['TEMHUM'] || 'sensor/Tem-Hum';
   private topicVentilador: string = process.env['VENTILADOR'] || 'sensor/Fan';
   private topicligth: string = process.env['LIGTH'] || 'sensor/LightSensor';
-  private topicLeds: string = process.env['LEDS'] || 'sensor/leds'
+  private topicLeds: string = process.env['LEDS'] || 'sensor/ledsReturn'
   private topicBomba: string = process.env['BOMBA'] || 'sensor/bomba'
 
   constructor(
@@ -43,7 +43,7 @@ export default class MqttClient {
 
 
     this.client.on('message', (topic, message) => {
-      
+
       switch (topic) {
         case this.topicTemHum:
           this.saveTemHumDb(topic, message)
@@ -57,13 +57,13 @@ export default class MqttClient {
           this.sendMessageLeds(topic, message)
           break;
 
-          case this.topicBomba:
+        case this.topicBomba:
           this.sendMessageLBomba(topic, message)
           break
 
-          case this.topicVentilador:
-            this.SendMessageVentilador(topic, message)
-            break;
+        case this.topicVentilador:
+          this.SendMessageVentilador(topic, message)
+          break;
 
         default:
           break;
@@ -77,38 +77,39 @@ export default class MqttClient {
 
   private async saveTemHumDb(topic: string, message: Buffer) {
 
-     const { temperatura, humedad } = JSON.parse(message.toString());
-     try {
-       await this.savePlantReadingUseCase.run({
-         idPlant: '',
-         humidity: humedad,
-         temperature: temperatura
-       });
+    const { temperatura, humedad } = JSON.parse(message.toString());
+    try {
+      await this.savePlantReadingUseCase.run({
+        idPlant: '',
+        humidity: humedad,
+        temperature: temperatura
+      });
 
-     } catch (error) {
-       console.error('Error al guardar y enviar la lectura de la planta:', error);
-     }
+    } catch (error) {
+      console.error('Error al guardar y enviar la lectura de la planta:', error);
+    }
   }
 
   private async sendMessageLigth(topic: string, message: Buffer) {
-    const {LightSensor} = JSON.parse(message.toString())
+    const { LightSensor } = JSON.parse(message.toString())
     await this.ligtUseCase.run(LightSensor)
   }
 
-  private async sendMessageLeds(topic: string, message: Buffer){
-    //aun no funciona
-    console.log(JSON.parse(message.toString()))
+  private async sendMessageLeds(topic: string, message: Buffer) {
+    const {visible, UV, IF} = JSON.parse(message.toString());
+     await this.ledsUseCase.run({visible, UV, IF});
   }
 
   private async SendMessageVentilador(topic: string, message: Buffer) {
-    const {FanOn} = JSON.parse(message.toString());
+    const { FanOn } = JSON.parse(message.toString());
     await this.fanUseCase.run(FanOn);
 
   }
 
   private async sendMessageLBomba(topic: string, message: Buffer) {
-    console.log(JSON.parse(message.toString()))
-    //aun no funcuiona
+    const { bomba } = JSON.parse(message.toString());
+    await  this.waterPumpUseCase.run(bomba);
+    console.log(bomba)
   }
 
 }

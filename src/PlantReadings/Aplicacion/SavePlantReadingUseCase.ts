@@ -22,7 +22,8 @@ export default class SavePlantReadingUseCase {
 
         const data = {
             type: 'TemHum',
-            data: plantReading
+            temperature: plantReading.temperature,
+            humidity: plantReading.humidity
         }
 
         // await this.entryRepository.save(plantReading)

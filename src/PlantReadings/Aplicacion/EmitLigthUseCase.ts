@@ -8,7 +8,7 @@ export default class EmitLigthUseCase {
 
         const data = {
             type: "ligth",
-            data: request
+            LightSensor: request
         }
 
         await this.sockedService.sendMessage('message', data);

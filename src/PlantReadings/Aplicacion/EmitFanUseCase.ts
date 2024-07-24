@@ -7,7 +7,7 @@ export default class EmitFanUseCase {
    async run (request: FanRequest): Promise <void> {
     const data = {
         type: 'Fan',
-        data: request
+        FanOn: request
     }
 
     this.sockedService.sendMessage('message', data)

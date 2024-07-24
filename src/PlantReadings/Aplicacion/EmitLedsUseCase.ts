@@ -6,9 +6,13 @@ export default class EmitLedsUseCase {
 
     async run (request: LedsRequeste): Promise<void>{
         const data = {
-            type: 'Leds',
-            data: request
+            type: 'leds',
+            UV: request.UV,
+            visible: request.visible,
+            IF: request.IF
         }
+
+ 
 
         await this.sockedService.sendMessage('message', data)
     }
