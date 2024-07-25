@@ -4,6 +4,7 @@ import EmitLedsUseCase from "../../Aplicacion/EmitLedsUseCase";
 import EmitLigthUseCase from "../../Aplicacion/EmitLigthUseCase";
 import EmitWaterPumpUseCase from "../../Aplicacion/EmitWaterPumpUseCase";
 import EmitFanUseCase from "../../Aplicacion/EmitFanUseCase";
+import EmitLevelWater from "../../Aplicacion/EmitLevelWater";
 import dotenv from "dotenv"
 
 dotenv.config();
@@ -14,15 +15,17 @@ export default class MqttClient {
   private topicTemHum: string = process.env['TEMHUM'] || 'sensor/Tem-Hum';
   private topicVentilador: string = process.env['VENTILADOR'] || 'sensor/Fan';
   private topicligth: string = process.env['LIGTH'] || 'sensor/LightSensor';
-  private topicLeds: string = process.env['LEDS'] || 'sensor/ledsReturn'
-  private topicBomba: string = process.env['BOMBA'] || 'sensor/bomba'
+  private topicLeds: string = process.env['LEDS'] || 'sensor/ledsReturn';
+  private topicBomba: string = process.env['BOMBA'] || 'sensor/bomba';
+  private topiclevelWater: string = process.env[''] || 'sensor/WaterLevel'
 
   constructor(
     private savePlantReadingUseCase: SavePlantReadingUseCase,
     private ledsUseCase: EmitLedsUseCase,
     private ligtUseCase: EmitLigthUseCase,
     private fanUseCase: EmitFanUseCase,
-    private waterPumpUseCase: EmitWaterPumpUseCase
+    private waterPumpUseCase: EmitWaterPumpUseCase,
+    private levelWaterUseCase: EmitLevelWater
   ) {
 
 
@@ -31,7 +34,7 @@ export default class MqttClient {
       console.log('Conectado al broker MQTT');
       //suscripcion de la temperatura y humedada
       this.client.subscribe(
-        [this.topicTemHum, this.topicVentilador, this.topicligth, this.topicLeds, this.topicBomba],
+        [this.topicTemHum, this.topicVentilador, this.topicligth, this.topicLeds, this.topicBomba, this.topiclevelWater],
         (error) => {
           if (!error) {
             console.log(`Suscrito al tema a los 5 temas`)
@@ -64,6 +67,10 @@ export default class MqttClient {
         case this.topicVentilador:
           this.SendMessageVentilador(topic, message)
           break;
+
+          case this.topiclevelWater:
+              this.sendMessageLevelWater(topic, message)
+            break;
 
         default:
           break;
@@ -109,7 +116,11 @@ export default class MqttClient {
   private async sendMessageLBomba(topic: string, message: Buffer) {
     const { bomba } = JSON.parse(message.toString());
     await  this.waterPumpUseCase.run(bomba);
-    console.log(bomba)
+  }
+
+  private async sendMessageLevelWater (topic: string, message: Buffer) {
+    const {WaterLevel} =JSON.parse(message.toString())
+    await this.levelWaterUseCase.run(WaterLevel)
   }
 
 }

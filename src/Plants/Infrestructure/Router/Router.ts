@@ -4,7 +4,8 @@ import {
     listController,
     getByPkController,
     createController,
-    deleteController
+    deleteController,
+    plantsStatsControllers
     
 } from '../Dependencies'
 
@@ -16,11 +17,13 @@ routerPlants.get('', authMiddleware.run.bind(authMiddleware),
 routerPlants.get('/:id', authMiddleware.run.bind(authMiddleware),
                    getByPkController.run.bind(getByPkController));
 
-routerPlants.post('', authMiddleware.run.bind(authMiddleware),
+routerPlants.post('/', authMiddleware.run.bind(authMiddleware),
                 createController.run.bind(createController));
 
-routerPlants.delete('', authMiddleware.run.bind(authMiddleware), 
+routerPlants.delete('/', authMiddleware.run.bind(authMiddleware), 
                   deleteController.run.bind(deleteController));
+
+routerPlants.get('/statisc/:id', plantsStatsControllers.run.bind(plantsStatsControllers) );
 
 
 export default routerPlants;

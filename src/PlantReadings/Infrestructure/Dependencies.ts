@@ -8,7 +8,7 @@ import PlantReadingModel from "./Models/PlantsReadingsModel";
 import MqttClient from "./Mqtt/MqttClient";
 import UUIDService from "./Service/UUIDService";
 import ExternalWebsocketIo from "./SocketIO/SocketIOServer";
-
+import EmitLevelWater from "../Aplicacion/EmitLevelWater";
 
 
 const uuidService = new UUIDService();
@@ -20,6 +20,7 @@ const useCaseFan = new EmitFanUseCase(externalWebsocketIo);
 const useCaseLeds = new EmitLedsUseCase(externalWebsocketIo);
 const useCaseLigt = new EmitLigthUseCase(externalWebsocketIo);
 const useCaseWaterPump = new EmitWaterPumpUseCase(externalWebsocketIo)
+const useCaseLevelWater = new EmitLevelWater(externalWebsocketIo)
 
 
 const mqttClient = new MqttClient(
@@ -27,7 +28,8 @@ const mqttClient = new MqttClient(
     useCaseLeds,
     useCaseLigt,
     useCaseFan,
-    useCaseWaterPump
+    useCaseWaterPump,
+    useCaseLevelWater
 );
 
 export default mqttClient;

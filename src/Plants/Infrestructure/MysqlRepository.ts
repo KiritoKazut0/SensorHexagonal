@@ -3,14 +3,18 @@ import Plants from "../Domain/Plants";
 import PlantsRepository from "../Domain/PlantsRepository";
 import PlantsModel from "./Models/PlantsModel";
 import UUIDInterface from "../Aplication/Service/UUIDInterface";
+import SendPlantStats from "../Domain/DTOS/sendPlantStats";
+import { Sequelize, QueryTypes } from "sequelize";
+
 
 export default class MysqlRepository implements PlantsRepository {
     constructor(
         readonly plantsModel: typeof PlantsModel,
-        readonly generateUuid: UUIDInterface) { 
+        readonly generateUuid: UUIDInterface,
+        readonly sequelize: Sequelize) {
 
-            this.plantsModel.sync();
-        }
+        this.plantsModel.sync();
+    }
     //typeOF es para indicarle que se usara metodos estaticoc y que no se esta instanciando como una clase
     // y que se esta haciendo una referecnia al modelo
 
@@ -60,7 +64,7 @@ export default class MysqlRepository implements PlantsRepository {
     async delete(pk: string): Promise<[null | undefined, string]> {
         try {
             const plant = await this.plantsModel.findByPk(pk)
-            if(plant === null){
+            if (plant === null) {
                 return [null, 'el elemento que desea eliminar no existe']
             }
 
@@ -71,5 +75,66 @@ export default class MysqlRepository implements PlantsRepository {
             return [null, 'Hubo un error en la consulta']
         }
     }
+
+    async StatsPlant(pk: string): Promise<[SendPlantStats | null | undefined, string]> {
+        try {
+            const query = `
+             SELECT 
+                idPlant,
+                AVG(temperature) AS averageTemperature,
+                AVG(humidity) AS averageHumidity,
+                MAX(date) AS latestDate,
+                COUNT(*) AS count
+                FROM plant_readings
+                WHERE idPlant = 'a9fc1553-0ac3-4b66-ae95-2cb9abd06051'
+                AND temperature BETWEEN -50 AND 50
+                AND humidity BETWEEN 0 AND 100
+                GROUP BY idPlant;
+           `;
+
+            const results: any[] = await this.sequelize.query(query, {
+                type: QueryTypes.SELECT
+            });
+
+            console.log('Query results:', results);
+
+            if (results.length === 0) {
+                return [undefined, 'No se encontraron datos para el identificador de planta especificado'];
+            }
+
+            const result = results[0];
+            console.log('Raw averageTemperature:', result.averageTemperature);
+            console.log('Raw averageHumidity:', result.averageHumidity);
+
+            const latestDate = new Date(result.latestDate);
+            const currentDate = new Date();
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+   
+
+
+            const StatsPlant: SendPlantStats = {
+                idPlant: pk,
+                averageTemperature: parseFloat(result.averageTemperature.toFixed(2)),
+                averageHumidity: parseFloat(result.averageHumidity.toFixed(2)),
+                time: timeString,
+                date: latestDate.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' })
+            };
+
+            return [StatsPlant, `Se realizó correctamente la consulta. Registros encontrados: ${result.count}`];
+        } catch (error) {
+            console.error('Error en StatsPlant:', error);
+            return [null, 'Hubo un error en la consulta'];
+        }
+    }
+
+
+
+
+
+
+
+
 
 }
